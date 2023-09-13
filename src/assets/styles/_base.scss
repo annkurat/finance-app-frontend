@@ -1,0 +1,16 @@
+*,
+*::before,
+*::after {
+	box-sizing: inherit;
+	margin-bottom: 0;
+	margin-top: 0;
+}
+
+html {
+	box-sizing: border-box;
+	font-size: 1.2rem;
+}
+
+body {
+	font-family: "Open Sans", sans-serif;
+}
