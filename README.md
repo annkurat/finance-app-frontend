@@ -1,6 +1,9 @@
 ![Vue.js](https://img.shields.io/badge/Vue.js-3.2.13-green)
 
-# finance-app-frontend
+# Finance App — Frontend
+
+Hello 👋
+For the application to fully function, you first need to clone the backend repository https://github.com/annkurat/finance-app-backend/.
 
 ## Project setup
 

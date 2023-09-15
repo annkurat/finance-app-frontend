@@ -1,22 +1,43 @@
 <template>
 	<div class="recent-stocks">
 		<p class="recent-stocks__title">Recent stocks</p>
-		<div class="stocks-container">
-			<div class="stock">
-				<p class="stock__title">Adcash OU</p>
-				<p class="stock__value">5.00€</p>
+		<div v-if="stocks.length" class="stocks-container">
+			<div v-for="stock in stocks" :key="stock.id" class="stock">
+				<p class="stock__title">{{ stock.name }}</p>
+				<p class="stock__value">{{ stock.price }}€</p>
 			</div>
-			<div class="stock">
-				<p class="stock__title">Apple</p>
-				<p class="stock__value">15.00€</p>
-			</div>
-			<div class="stock">
-				<p class="stock__title">Google</p>
-				<p class="stock__value">36.00€</p>
-			</div>
+		</div>
+		<div v-else class="empty-block">
+			<p class="empty-text">There are no stocks at the moment</p>
 		</div>
 	</div>
 </template>
+<script>
+import axios from "axios";
+
+export default {
+	data() {
+		return {
+			stocks: [],
+		};
+	},
+	created() {
+		axios
+			.get("/api/stock/")
+			.then((response) => {
+				this.stocks = response.data;
+				this.stocks.sort(
+					(a, b) => new Date(b.created_at) - new Date(a.created_at)
+				);
+				this.stocks = this.stocks.slice(0, 3);
+			})
+			.catch((error) => {
+				console.error("Error:", error);
+			});
+	},
+};
+</script>
+
 <style lang="scss" scoped>
 @import "@/assets/styles/main.scss";
 

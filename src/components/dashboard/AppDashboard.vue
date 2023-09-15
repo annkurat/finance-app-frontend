@@ -1,8 +1,8 @@
 <template>
 	<div class="dashboard">
 		<div class="main-section">
-			<GeneralInformation />
-			<TransactionsTable />
+			<GeneralInformation :user="user" />
+			<TransactionsTable :user="user" />
 		</div>
 		<div class="additional-info">
 			<RecentStocks />
@@ -24,6 +24,11 @@ export default {
 		TransactionsTable,
 		MostProfitableClients,
 	},
+	computed: {
+		user() {
+			return this.$store.state.user || {};
+		},
+	},
 };
 </script>
 
@@ -40,6 +45,17 @@ export default {
 	}
 	@include respond(tab-port) {
 		grid-template-columns: repeat(1, 100%);
+	}
+}
+.main-section {
+	padding-inline: 3rem;
+
+	@include respond(tab-land) {
+		padding-inline: 1.5rem;
+	}
+
+	@include respond(phone) {
+		padding-inline: 0.5rem;
 	}
 }
 </style>

@@ -1,9 +1,9 @@
 <template>
-	<div v-if="isShow" class="modal-container" @click="onClose">
+	<div v-if="isShow" class="modal-container" @click="close">
 		<div @click.stop class="custom-modal">
 			<div class="custom-modal__header">
 				<p class="custom-modal__title">{{ title }}</p>
-				<span @click="onClose" class="custom-modal__close">✕</span>
+				<span @click="close" class="custom-modal__close">✕</span>
 			</div>
 			<div class="custom-modal__body">
 				<slot />
@@ -26,7 +26,7 @@ export default {
 		show() {
 			this.isShow = true;
 		},
-		onClose() {
+		close() {
 			this.isShow = false;
 		},
 	},
@@ -49,7 +49,7 @@ export default {
 	margin: 4rem auto;
 	border-radius: 0.4rem;
 	background-color: #fff;
-	max-width: 600px;
+	max-width: fit-content;
 
 	&__header {
 		border-bottom: 2px solid $color-gray-light-2;

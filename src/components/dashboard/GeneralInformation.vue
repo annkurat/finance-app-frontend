@@ -4,7 +4,7 @@
 		<div class="additional-blocks-container">
 			<div class="additional-block">
 				<span class="additional-block__title">Current Balance</span>
-				<p class="additional-block__value">659.00€</p>
+				<p class="additional-block__value">{{ user.current_balance }}€</p>
 			</div>
 			<div class="additional-block">
 				<span class="additional-block__title">Total Profit/Loss</span>
@@ -19,18 +19,25 @@
 		</div>
 	</div>
 </template>
+<script>
+export default {
+	props: {
+		user: { type: Object, required: true },
+	},
+};
+</script>
 <style lang="scss" scoped>
 @import "@/assets/styles/main.scss";
 
 .general-info {
-	padding: 1rem 3rem;
+	padding-block: 1rem;
 
 	@include respond(tab-land) {
-		padding: 1rem 1.5rem;
+		padding-block: 1rem;
 	}
 
 	@include respond(phone) {
-		padding: 1rem 0.5rem;
+		padding-block: 1rem;
 	}
 
 	&__title {

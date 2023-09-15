@@ -1,9 +1,19 @@
 <template>
 	<header class="header">
 		<img src="../../assets/images/logo.png" alt="Logo" width="30" height="30" />
-		<p class="header__user-name">Anneli Kurut</p>
+		<p class="header__user-name">{{ user.first_name }} {{ user.last_name }}</p>
 	</header>
 </template>
+
+<script>
+export default {
+	computed: {
+		user() {
+			return this.$store.state.user || {};
+		},
+	},
+};
+</script>
 
 <style lang="scss" scoped>
 @import "@/assets/styles/main.scss";

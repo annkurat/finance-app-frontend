@@ -2,11 +2,14 @@
 	<div class="transactions">
 		<div class="transactions__header">
 			<p class="transactions__title">Transactions</p>
-			<button class="transactions__button" @click="onCreateClick">
+			<button
+				v-if="isShowButton"
+				class="transactions__button"
+				@click="onCreateClick">
 				Create new purchase
 			</button>
 		</div>
-		<div class="table-responsive">
+		<div v-if="transactions.length" class="table-responsive">
 			<table class="table">
 				<thead>
 					<tr>
@@ -19,32 +22,24 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td>Adcash OÜ</td>
-						<th>10</th>
-						<th>5.00€</th>
-						<th>10.00€</th>
-						<th class="green">+10.00€</th>
-						<td>10.09.2023 10:46</td>
-					</tr>
-					<tr>
-						<td>Google</td>
-						<th>10</th>
-						<th>5.00€</th>
-						<th>10.00€</th>
-						<th class="red">-810.00€</th>
-						<td>10.09.2023 10:46</td>
-					</tr>
-					<tr>
-						<td>Apple</td>
-						<th>10</th>
-						<th>5.00€</th>
-						<th>10.00€</th>
-						<th class="green">1130.00€</th>
-						<td>10.09.2023 10:46</td>
+					<tr v-for="transaction in transactions" :key="transaction.id">
+						<td>{{ transaction.stock.name }}</td>
+						<th>{{ transaction.volume }}</th>
+						<th>{{ transaction.purchase_price }}€</th>
+						<th>{{ transaction.stock.price }}€</th>
+						<th>
+							{{
+								transaction.purchase_price -
+								(transaction.stock.price * transaction.volume).toFixed(2)
+							}}€
+						</th>
+						<td>{{ transaction.created_at }}</td>
 					</tr>
 				</tbody>
 			</table>
+		</div>
+		<div v-else class="empty-block">
+			<p class="empty-text">There are no transactions at the moment</p>
 		</div>
 	</div>
 
@@ -54,9 +49,13 @@
 				class="modal__select"
 				placeholder="Choose stock"
 				:options="stocks"
-				label="stocks"
+				label="name"
 				@option:selected="changeStock" />
-			<input class="modal__field" type="number" min="0" />
+			<input v-model="volume" class="modal__field" type="number" min="0" />
+			<span v-if="selectedStock.price && volume !== 0" class="modal__desc"
+				>Price: {{ selectedStock.price }} * {{ volume }} =
+				{{ (selectedStock.price * volume).toFixed(2) }}€</span
+			>
 			<button class="modal__button" @click="onPurchaseClick">Purchase</button>
 		</div>
 	</AppModal>
@@ -65,26 +64,71 @@
 <script>
 import AppModal from "@/components/AppModal.vue";
 import VueSelect from "vue-select";
+import axios from "axios";
 
 export default {
 	data() {
 		return {
-			stocks: ["Adcash OÜ", "Google", "Apple"],
+			stocks: [],
+			selectedStock: {},
+			volume: 0,
+			transactions: [],
 		};
+	},
+	props: {
+		isShowButton: { type: Boolean, default: true },
+		user: { type: Object, required: true },
 	},
 	components: {
 		AppModal,
 		VueSelect,
 	},
+
+	mounted() {
+		axios
+			.get("/api/transaction/", {
+				params: {
+					user_id: this.user?.id,
+				},
+			})
+			.then((response) => {
+				this.transactions = response.data;
+			})
+			.catch((error) => {
+				console.error("Error:", error);
+			});
+	},
 	methods: {
 		onCreateClick() {
 			this.$refs.modal.show();
+			axios
+				.get("/api/stock/")
+				.then((response) => {
+					this.stocks = response.data;
+				})
+				.catch((error) => {
+					console.error("Error:", error);
+				});
 		},
-		changeStock() {
-			console.log("changed");
+		changeStock(e) {
+			this.selectedStock = e;
 		},
 		onPurchaseClick() {
-			console.log("clicked");
+			const transactionData = {
+				user_id: this.user.id,
+				stock_id: this.selectedStock.id,
+				volume: this.volume,
+				purchase_price: (this.selectedStock.price * this.volume).toFixed(2),
+			};
+			axios
+				.post("/api/transaction/", transactionData)
+				.then((response) => {
+					this.transactions.push(response.data);
+					this.$refs.modal.close();
+				})
+				.catch((error) => {
+					console.error("Error creating transaction:", error);
+				});
 		},
 	},
 };
@@ -94,14 +138,14 @@ export default {
 @import "@/assets/styles/main.scss";
 
 .transactions {
-	padding: 1rem 3rem;
+	padding-block: 1rem;
 
 	@include respond(tab-land) {
-		padding: 1rem 1.5rem;
+		padding-block: 1rem;
 	}
 
 	@include respond(phone) {
-		padding: 1rem 0.5rem;
+		padding-block: 1rem;
 	}
 
 	&__header {
@@ -173,6 +217,10 @@ export default {
 		border-radius: 0.4rem;
 		padding-block: 0.25rem;
 		cursor: pointer;
+	}
+	&__desc {
+		font-size: 0.8rem;
+		color: $color-gray-light-3;
 	}
 }
 </style>
