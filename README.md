@@ -23,6 +23,20 @@ npm run serve
 npm run build
 ```
 
+Add dist directory:
+
+```
+git add dist -f
+```
+
+```
+git commit -m 'adding dist'
+```
+
+```
+git subtree push --prefix dist origin gh-pages
+```
+
 ### Lints and fixes files
 
 ```
