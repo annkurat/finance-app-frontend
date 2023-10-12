@@ -21,11 +21,12 @@ export default {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	background-color: $color-gray-light-1;
+	background: $color-orange-200;
 	padding: 1.25rem 2rem;
 
 	&__user-name {
 		font-weight: bold;
+		color: $color-orange-800;
 	}
 }
 </style>
